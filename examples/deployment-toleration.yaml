@@ -1,33 +1,19 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-  labels:
-    name: nginx
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    ports:
-    - containerPort: 80
-  nodeName:
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: nodejs-web
   labels:
-    name: nginx
+    name: nodejs-web
 spec:
   replicas: 3
   selector:
     matchLabels:
-      name: nginx
+      name: nodejs-web
   template:
     metadata:
-      name: nginx
+      name: nodejs-web
       labels:
-        name: nginx
+        name: nodejs-web
     spec:
       tolerations:
       - key: "key1"
@@ -35,8 +21,22 @@ spec:
         value: "value1"
         effect: "NoExecute"
       containers:
-        - name: nginx
-          image: nginx
+        - name: nodejs-web
+          image: khannedy/nodejs-web:1
           ports:
-            - containerPort: 80
-      
+            - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-web-service
+spec:
+  type: NodePort
+  selector:
+    name: nodejs-web
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30001
