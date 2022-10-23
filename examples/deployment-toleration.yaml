@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+  nodeName:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        name: nginx
+    spec:
+      tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoExecute"
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+      
